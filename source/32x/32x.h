@@ -40,15 +40,15 @@
 #define MARS_SYS_VINT_CLR   (*(volatile unsigned short *)0x20004016)
 #define MARS_SYS_HINT_CLR   (*(volatile unsigned short *)0x20004018)
 #define MARS_SYS_CMDI_CLR   (*(volatile unsigned short *)0x2000401A)
-#define MARS_SYS_PWMI_CLR   (*(volatile unsigned short *)0x2000401C)
-#define MARS_SYS_COMM0      (*(volatile unsigned short *)0x20004020) /* Master SH2 communication */
-#define MARS_SYS_COMM2      (*(volatile unsigned short *)0x20004022)
-#define MARS_SYS_COMM4      (*(volatile unsigned short *)0x20004024) /* Slave SH2 communication */
-#define MARS_SYS_COMM6      (*(volatile unsigned short *)0x20004026)
-#define MARS_SYS_COMM8      (*(volatile unsigned short *)0x20004028)
-#define MARS_SYS_COMM10     (*(volatile unsigned short *)0x2000402A)
-#define MARS_SYS_COMM12     (*(volatile unsigned short *)0x2000402C) /* controller 1 current value */
-#define MARS_SYS_COMM14     (*(volatile unsigned short *)0x2000402E) /* controller 2 current value */
+#define MARS_SYS_PWMI_CLR   (*(volatile unsigned short *)0x2000401C)									// MD SIDE:
+#define MARS_SYS_COMM0      (*(volatile unsigned short *)0x20004020) /* Master SH2 communication */		// 0xA15120
+#define MARS_SYS_COMM2      (*(volatile unsigned short *)0x20004022)									// 0xA15122
+#define MARS_SYS_COMM4      (*(volatile unsigned short *)0x20004024) /* Slave SH2 communication */		// 0xA15124
+#define MARS_SYS_COMM6      (*(volatile unsigned short *)0x20004026)									// 0xA15126
+#define MARS_SYS_COMM8      (*(volatile unsigned short *)0x20004028)									// 0xA15128
+#define MARS_SYS_COMM10     (*(volatile unsigned short *)0x2000402A)									// 0xA1512A
+#define MARS_SYS_COMM12     (*(volatile unsigned short *)0x2000402C) /* controller 1 current value */	// 0xA1512C
+#define MARS_SYS_COMM14     (*(volatile unsigned short *)0x2000402E) /* controller 2 current value */	// 0xA1512E
 
 #define MARS_PWM_CTRL       (*(volatile unsigned short *)0x20004030)
 #define MARS_PWM_CYCLE      (*(volatile unsigned short *)0x20004032)

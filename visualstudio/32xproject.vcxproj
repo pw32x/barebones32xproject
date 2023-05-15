@@ -81,6 +81,7 @@
     <ClInclude Include="..\source\32x\attr.h" />
     <ClInclude Include="..\source\32x\mars.h" />
     <ClInclude Include="..\source\32x\marshw.h" />
+    <ClInclude Include="..\source\common\comm_ids.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

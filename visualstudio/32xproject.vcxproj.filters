@@ -14,6 +14,9 @@
     <Filter Include="build">
       <UniqueIdentifier>{806e2cfd-9bb0-4b54-a6fa-aa50d392db5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{5f7177e1-76e4-49b0-96b5-f146a4558353}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="clean.bat">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="..\source\32x\attr.h">
       <Filter>Source Files\32x</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\common\comm_ids.h">
+      <Filter>Source Files\common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

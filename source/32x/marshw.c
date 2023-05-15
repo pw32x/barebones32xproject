@@ -25,6 +25,7 @@
 */
 
 #include "marshw.h"
+#include "../common/comm_ids.h"
 
 static volatile uint16_t mars_activescreen = 0;
 
@@ -247,14 +248,14 @@ void Mars_SetMDCrsr(int x, int y)
 {
 	while (MARS_SYS_COMM0);
 	MARS_SYS_COMM2 = (x<<6)|y;
-	MARS_SYS_COMM0 = 0x0800;			/* set current md cursor */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_CURRENT_CURSOR; /* set current md cursor */
 }
 
 void Mars_GetMDCrsr(int *x, int *y)
 {
 	unsigned t;
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0900;			/* get current md cursor */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_GET_CURRENT_CURSOR;			/* get current md cursor */
 	while (MARS_SYS_COMM0);
 	t = MARS_SYS_COMM2;
 	*y = t & 31;
@@ -264,13 +265,13 @@ void Mars_GetMDCrsr(int *x, int *y)
 void Mars_SetMDColor(int fc, int bc)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0A00 | (bc << 4) | fc;			/* set font fg and bg colors */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_FONT_AND_FGBG_COLORS | (bc << 4) | fc;			/* set font fg and bg colors */
 }
 
 void Mars_GetMDColor(int *fc, int *bc)
 {
 	while (MARS_SYS_COMM0);
-	for (MARS_SYS_COMM0 = 0x0B00; MARS_SYS_COMM0;);		/* get font fg and bg colors */
+	for (MARS_SYS_COMM0 = SH2MD_COMMAND_GET_FONT_AND_FGBG_COLORS; MARS_SYS_COMM0;);		/* get font fg and bg colors */
 	*fc = (unsigned)(MARS_SYS_COMM2 >> 0) & 15;
 	*bc = (unsigned)(MARS_SYS_COMM2 >> 4) & 15;
 }
@@ -278,19 +279,19 @@ void Mars_GetMDColor(int *fc, int *bc)
 void Mars_SetMDPal(int cpsel)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0C00 | cpsel;	/* set palette select */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_PALETTE_SELECT | cpsel;	/* set palette select */
 }
 
 void Mars_MDPutChar(char chr)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0D00 | chr;		/* put char at current cursor pos */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_PUT_CHAR | chr;		/* put char at current cursor pos */
 }
 
 void Mars_ClearNTA(void)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0E00;			/* clear name table a */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_CLEAR_NAME_TABLE_A;			/* clear name table a */
 }
 
 void Mars_MDPutString(char *str)
@@ -302,26 +303,26 @@ void Mars_MDPutString(char *str)
 void Mars_DebugStart(void)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x0F00;			/* start debug queue */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_START_DEBUG_QUEUE;			/* start debug queue */
 }
 
 void Mars_DebugQueue(int id, short val)
 {
 	while (MARS_SYS_COMM0);
 	MARS_SYS_COMM2 = val;
-	MARS_SYS_COMM0 = 0x1000 | id;		/* queue debug entry */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_QUEUE_DEBUG_ENTRY | id;		/* queue debug entry */
 }
 
 void Mars_DebugEnd(void)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x1100;			/* end debug queue and display */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_END_DEBUG_QUEUE;			/* end debug queue and display */
 }
 
 void Mars_SetBankPage(int bank, int page)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x1600 | (page<<3) | bank;
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_BANK_PAGE | (page<<3) | bank;
 	while (MARS_SYS_COMM0);
 }
 
@@ -329,7 +330,7 @@ void Mars_SetBankPageSec(int bank, int page)
 {
 	volatile unsigned short bcomm4 = MARS_SYS_COMM4;
 
-	MARS_SYS_COMM4 = 0x1600 | (page<<3) | bank;
+	MARS_SYS_COMM4 = SH2MD_COMMAND_SET_BANK_PAGE | (page<<3) | bank;
 	while (MARS_SYS_COMM4 != 0x1000);
 
 	MARS_SYS_COMM4 = bcomm4;
@@ -397,7 +398,7 @@ int Mars_ReadController(int ctrl)
 void Mars_CtlMDVDP(int sel)
 {
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = 0x1900 | (sel & 0x00FF);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_CTL_MD_VDP | (sel & 0x00FF);
 	while (MARS_SYS_COMM0);
 } 
 
@@ -405,25 +406,25 @@ void Mars_StoreWordColumnInMDVRAM(int c)
 {
 	while (MARS_SYS_COMM0);
 	MARS_SYS_COMM2 = c;
-	MARS_SYS_COMM0 = 0x1A00;		/* sel = to VRAM, offset in comm2, start move */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_STORE_WORD_COLUMN_IN_MD_VRAM;		/* sel = to VRAM, offset in comm2, start move */
 }
 
 void Mars_LoadWordColumnFromMDVRAM(int c, int offset, int len)
 {
 	while (MARS_SYS_COMM0 != 0);
 	MARS_SYS_COMM2 = c;
-	MARS_SYS_COMM0 = 0x1A01;		/* sel = to VRAM, offset in comm2, start move */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_LOAD_WORD_COLUMN_FROM_MD_VRAM;		/* sel = to VRAM, offset in comm2, start move */
 	while (MARS_SYS_COMM0 != 0x9A00);
 
 	MARS_SYS_COMM2 = (((uint16_t)len)<<8) | offset;  /* (length<<8)|offset */
-	MARS_SYS_COMM0 = 0x1A01;		/* sel = to VRAM, offset in comm2, start move */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_LOAD_WORD_COLUMN_FROM_MD_VRAM;		/* sel = to VRAM, offset in comm2, start move */
 }
 
 void Mars_SwapWordColumnWithMDVRAM(int c)
 {
     while (MARS_SYS_COMM0);
     MARS_SYS_COMM2 = c;
-    MARS_SYS_COMM0 = 0x1A02;        /* sel = swap with VRAM, column in comm2, start move */
+    MARS_SYS_COMM0 = SH2MD_COMMAND_SWAP_WORD_COLUMN_WITH_MD_VRAM;        /* sel = swap with VRAM, column in comm2, start move */
 }
 
 void Mars_Finish(void)

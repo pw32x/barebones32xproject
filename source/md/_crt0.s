@@ -237,7 +237,7 @@ main_loop:
         bsr     bump_fm
         move.w  #0x2000,sr          /* enable ints */
 
-  		jsr md_update
+  		jsr md_update               /* call C function */
 
         move.w  0xA15120,d0         /* get COMM0 */
         bne.b   handle_req
