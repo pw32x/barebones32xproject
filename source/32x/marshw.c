@@ -139,6 +139,50 @@ char Mars_UploadPalette(const uint8_t* palette)
 	return 1;
 }
 
+int Mars_PollMouse(void)
+{
+	unsigned int mouse1, mouse2;
+	int port = mars_mouseport;
+
+	if (port < 0)
+		return -1;
+
+	while (MARS_SYS_COMM0); // wait until 68000 has responded to any earlier requests
+	MARS_SYS_COMM0 = SH2MD_COMMAND_POLL_MOUSE | port; // tells 68000 to read mouse
+	while (MARS_SYS_COMM0 == (SH2MD_COMMAND_POLL_MOUSE | port)); // wait for mouse value
+
+	mouse1 = MARS_SYS_COMM0;
+	mouse2 = MARS_SYS_COMM2;
+	MARS_SYS_COMM0 = 0; // tells 68000 we got the mouse value
+
+	return (int)((mouse1 << 16) | mouse2);
+}
+
+int Mars_ParseMousePacket(int mouse, int* pmx, int* pmy)
+{
+	int mx, my;
+
+	// (YO XO YS XS S  M  R  L  X7 X6 X5 X4 X3 X2 X1 X0 Y7 Y6 Y5 Y4 Y3 Y2 Y1 Y0)
+
+	mx = ((unsigned)mouse >> 8) & 0xFF;
+	// check overflow
+	if (mouse & 0x00400000)
+		mx = (mouse & 0x00100000) ? -256 : 256;
+	else if (mouse & 0x00100000)
+		mx |= 0xFFFFFF00;
+
+	my = mouse & 0xFF;
+	// check overflow
+	if (mouse & 0x00800000)
+		my = (mouse & 0x00200000) ? -256 : 256;
+	else if (mouse & 0x00200000)
+		my |= 0xFFFFFF00;
+
+	*pmx = mx;
+	*pmy = my;
+
+	return mouse;
+}
 
 int Mars_GetWDTCount(void)
 {
@@ -206,6 +250,8 @@ void Mars_Init(void)
 	/* detect input devices */
 	Mars_DetectInputDevices();
 
+	Mars_UpdateCD();
+
 	if (mars_cd_ok && !(mars_cd_ok & 0x2))
 	{
 		/* if the CD is present and it's */
@@ -235,11 +281,178 @@ void pri_vbi_handler(void)
 	Mars_DetectInputDevices();
 }
 
+void Mars_ReadSRAM(uint8_t * buffer, int offset, int len)
+{
+	uint8_t *ptr = buffer;
+
+	while (MARS_SYS_COMM0);
+	while (len-- > 0) {
+		MARS_SYS_COMM2 = offset++;
+		MARS_SYS_COMM0 = SH2MD_COMMAND_READ_SRAM;    /* Read SRAM */
+		while (MARS_SYS_COMM0);
+		*ptr++ = MARS_SYS_COMM2 & 0x00FF;
+	}
+}
+
+void Mars_WriteSRAM(const uint8_t* buffer, int offset, int len)
+{
+	const uint8_t *ptr = buffer;
+
+	while (MARS_SYS_COMM0);
+	while (len-- > 0) {
+		MARS_SYS_COMM2 = offset++;
+		MARS_SYS_COMM0 = SH2MD_COMMAND_WRITE_SRAM | *ptr++;    /* Write SRAM */
+		while (MARS_SYS_COMM0);
+	}
+}
+
+void Mars_UpdateCD(void)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_UPDATE_CD;
+	while (MARS_SYS_COMM0);
+	mars_cd_ok = MARS_SYS_COMM2;
+	mars_num_cd_tracks = mars_cd_ok >> 2;
+	mars_cd_ok = mars_cd_ok & 0x3;
+}
+
+void Mars_UseCD(int usecd)
+{
+	while (MARS_SYS_COMM0);
+
+	if (!mars_cd_ok)
+		return;
+
+	MARS_SYS_COMM2 = usecd & 1;
+	MARS_SYS_COMM0 = SH2MD_COMMAND_USE_CD;
+	while (MARS_SYS_COMM0);
+}
+
+void Mars_PlayTrack(char usecd, int playtrack, void *vgmptr, int vgmsize, char looping)
+{
+	Mars_UseCD(usecd);
+
+	if (!usecd)
+	{
+		int i;
+		uint16_t s[4];
+
+		s[0] = (uintptr_t)vgmsize>>16, s[1] = (uintptr_t)vgmsize&0xffff;
+		s[2] = (uintptr_t)vgmptr >>16, s[3] = (uintptr_t)vgmptr &0xffff;
+
+		for (i = 0; i < 4; i++) {
+			MARS_SYS_COMM2 = s[i];
+			MARS_SYS_COMM0 = 0x0301+i; // SH2MD_COMMAND_START_MUSIC + 1 + i
+			while (MARS_SYS_COMM0);
+		}
+	}
+
+	MARS_SYS_COMM2 = playtrack | (looping ? 0x8000 : 0x0000);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_START_MUSIC; /* start music */
+	while (MARS_SYS_COMM0);
+}
+
+void Mars_StopTrack(void)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_STOP_MUSIC; /* stop music */
+	while (MARS_SYS_COMM0);
+}
+
+void Mars_SetMusicVolume(uint8_t volume)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_SET_MUSIC_VOLUME|volume;
+	while (MARS_SYS_COMM0);
+}
+
 void Mars_WaitTicks(int ticks)
 {
 	unsigned ticend = mars_vblank_count + ticks;
 	while (mars_vblank_count < ticend);
 }
+
+/*
+ *  MD network functions
+ */
+
+static inline unsigned short GetNetByte(void)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_GET_BYTE_FROM_NETWORK;	/* get a byte from the network */
+	while (MARS_SYS_COMM0);
+	return MARS_SYS_COMM2;		/* status:byte */
+}
+
+/*
+ *  Get a byte from the network. The number of ticks to wait for a byte
+ *  is passed in. A wait time of 0 means return immediately. The return
+ *  value is -2 for a timeout/no bytes are waiting, -1 if a network error
+ *  occurred, and 0 to 255 for a received byte.
+ */
+int Mars_GetNetByte(int wait)
+{
+	unsigned short ret;
+	unsigned ticend;
+
+	if (!wait)
+	{
+		/* no wait - return a value immediately */
+		ret = GetNetByte();
+		return (ret == 0xFF00) ? -2 : (ret & 0xFF00) ? -1 : (int)(ret & 0x00FF);
+	}
+
+	/* quick check for byte in rec buffer */
+	ret = GetNetByte();
+	if (ret != 0xFF00)
+		return (ret & 0xFF00) ? -1 : (int)(ret & 0x00FF);
+
+	/* nothing waiting - do timeout loop */
+	ticend = mars_vblank_count + wait;
+	while (mars_vblank_count < ticend)
+	{
+		ret = GetNetByte();
+		if (ret == 0xFF00)
+			continue;	/* no bytes waiting */
+		/* GetNetByte returned a byte or a net error */
+		return (ret & 0xFF00) ? -1 : (int)(ret & 0x00FF);
+	}
+	return -2;	/* timeout */
+}
+
+/*
+ *  Put a byte to the network. Returns -1 if timeout.
+ */
+int Mars_PutNetByte(int val)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SEND_BYTE_TO_NETWORK | (val & 0x00FF);	/* send a byte to the network */
+	while (MARS_SYS_COMM0);
+	return (MARS_SYS_COMM2 == 0xFFFF) ? -1 : 0;
+}
+
+void Mars_SetupNet(int type)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_SETUP_NETWORK | (type & 255);		/* init joyport 2 for networking */
+	while (MARS_SYS_COMM0);
+}
+
+void Mars_CleanupNet(void)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM0 = SH2MD_CLEANUP_NETWORKING;		/* cleanup networking */
+	while (MARS_SYS_COMM0);
+}
+
+void Mars_SetNetLinkTimeout(int timeout)
+{
+	while (MARS_SYS_COMM0);
+	MARS_SYS_COMM2 = timeout;
+	MARS_SYS_COMM0 = SH2MD_SET_NETLINK_TIMEOUT;
+	while (MARS_SYS_COMM0);
+}
+
 
 /*
  *  MD video debug functions
