@@ -63,12 +63,16 @@ int main(void)
 
 	Mars_MDPutString("Hello world from 32x Side");
 
+	int x = 40;
+	int y = 50;	
+
 	while (1)
 	{
 		clear_framebuffer();
 
-		int x = 40;
-		int y = 50;
+		Mars_SetMDCrsr(2, 20);
+
+		Mars_MDPutString("Hello world from 32x Side");
 
 		draw_square(x, y);
 

@@ -237,8 +237,6 @@ main_loop:
         bsr     bump_fm
         move.w  #0x2000,sr          /* enable ints */
 
-  		jsr md_update               /* call C function */
-
         move.w  0xA15120,d0         /* get COMM0 */
         bne.b   handle_req
 
@@ -285,7 +283,8 @@ handle_req:
         cmpi.w  #0x07FF,d0
         bls     set_usecd
         cmpi.w  #0x08FF,d0
-        bls     set_crsr
+        #bls     set_crsr
+        bls     c_handler
         cmpi.w  #0x09FF,d0
         bls     get_crsr
         cmpi.w  #0x0AFF,d0
@@ -294,8 +293,9 @@ handle_req:
         bls     get_color
         cmpi.w  #0x0CFF,d0
         bls     set_dbpal
-        cmpi.w  #0x0DFF,d0
-        bls     put_chr
+        cmpi.w  #0x0DFF,d0  
+        #bls     put_chr
+        bls     c_handler
         cmpi.w  #0x0EFF,d0
         bls     clear_a
         cmpi.w  #0x0FFF,d0
@@ -990,6 +990,11 @@ net_cleanup:
         move.w  #0,0xA15120         /* done */
         bra     main_loop
 
+
+# C-side function call to handle 32X commands. Will eventually migrate handle_req to be entirely in C
+c_handler:
+        jsr     md_update               /* call C function */
+        bra     main_loop
 
 | video debug functions
 
@@ -2196,10 +2201,11 @@ fg_color:
         dc.l    0x11111111      /* default to color 1 for fg color */
 bg_color:
         dc.l    0x00000000      /* default to color 0 for bg color */
-crsr_x:
-        dc.w    0
-crsr_y:
-        dc.w    0
+#crsr_x:
+#        dc.w    0
+#crsr_y:
+#        dc.w    0
+.global dbug_color
 dbug_color:
         dc.w    0
 

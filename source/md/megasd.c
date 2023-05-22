@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "megasd.h"
 
 #define MEGASD_ATTR_DATA		 __attribute__((section(".data")))
 

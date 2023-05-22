@@ -461,14 +461,14 @@ void Mars_SetMDCrsr(int x, int y)
 {
 	while (MARS_SYS_COMM0);
 	MARS_SYS_COMM2 = (x<<6)|y;
-	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_CURRENT_CURSOR; /* set current md cursor */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_SET_CURSOR; /* set current md cursor */
 }
 
 void Mars_GetMDCrsr(int *x, int *y)
 {
 	unsigned t;
 	while (MARS_SYS_COMM0);
-	MARS_SYS_COMM0 = SH2MD_COMMAND_GET_CURRENT_CURSOR;			/* get current md cursor */
+	MARS_SYS_COMM0 = SH2MD_COMMAND_GET_CURSOR;			/* get current md cursor */
 	while (MARS_SYS_COMM0);
 	t = MARS_SYS_COMM2;
 	*y = t & 31;

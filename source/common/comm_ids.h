@@ -13,8 +13,8 @@
 
 #define SH2MD_SET_MUSIC_VOLUME						0x1800
 
-#define SH2MD_COMMAND_SET_CURRENT_CURSOR			0x0800 // set current md cursor
-#define SH2MD_COMMAND_GET_CURRENT_CURSOR			0x0900 // get current md cursor
+#define SH2MD_COMMAND_SET_CURSOR					0x0800 // set current md cursor
+#define SH2MD_COMMAND_GET_CURSOR					0x0900 // get current md cursor
 #define SH2MD_COMMAND_SET_FONT_AND_FGBG_COLORS		0x0A00 // set font fg and bg colors
 #define SH2MD_COMMAND_GET_FONT_AND_FGBG_COLORS		0x0B00 // get font fg and bg colors
 #define SH2MD_COMMAND_SET_PALETTE_SELECT			0x0C00 // set palette select
