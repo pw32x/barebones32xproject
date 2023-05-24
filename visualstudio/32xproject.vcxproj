@@ -58,7 +58,6 @@
     <None Include="..\build\Makefile_MD" />
     <None Include="..\source\32x\_crt0.s" />
     <None Include="..\source\md\cd.s" />
-    <None Include="..\source\md\font.s" />
     <None Include="..\source\md\kos.s" />
     <None Include="..\source\md\vgm_player.s" />
     <None Include="..\source\md\_crt0.s" />
@@ -72,6 +71,7 @@
     <ClCompile Include="..\source\32x\main.c" />
     <ClCompile Include="..\source\md\cd_init.c" />
     <ClCompile Include="..\source\md\everdrive.c" />
+    <ClCompile Include="..\source\md\font.c" />
     <ClCompile Include="..\source\md\main.c" />
     <ClCompile Include="..\source\md\megasd.c" />
     <ClCompile Include="..\source\md\vgm.c" />
@@ -84,6 +84,7 @@
     <ClInclude Include="..\source\32x\marshw.h" />
     <ClInclude Include="..\source\common\comm_ids.h" />
     <ClInclude Include="..\source\md\cd_init.h" />
+    <ClInclude Include="..\source\md\font.h" />
     <ClInclude Include="..\source\md\megasd.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

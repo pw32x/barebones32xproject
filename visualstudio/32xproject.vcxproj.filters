@@ -34,9 +34,6 @@
     <None Include="..\build\Makefile_32X">
       <Filter>build</Filter>
     </None>
-    <None Include="..\source\md\font.s">
-      <Filter>Source Files\Genesis</Filter>
-    </None>
     <None Include="..\source\md\vgm_player.s">
       <Filter>Source Files\Genesis</Filter>
     </None>
@@ -81,6 +78,9 @@
     <ClCompile Include="..\source\md\cd_init.c">
       <Filter>Source Files\Genesis</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\md\font.c">
+      <Filter>Source Files\Genesis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\32x\32x.h">
@@ -102,6 +102,9 @@
       <Filter>Source Files\Genesis</Filter>
     </ClInclude>
     <ClInclude Include="..\source\md\cd_init.h">
+      <Filter>Source Files\Genesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\font.h">
       <Filter>Source Files\Genesis</Filter>
     </ClInclude>
   </ItemGroup>

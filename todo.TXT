@@ -1,1 +1,6 @@
-migrate MD-side command switch from assembly to C
+load a md background
+load a md sprite
+display md sprite
+handle controller input on the 32x side
+move md sprite from 32x side
+
