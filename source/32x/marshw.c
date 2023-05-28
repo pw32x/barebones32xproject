@@ -198,7 +198,7 @@ void Mars_InitVideo(int lines)
 
 	while ((MARS_SYS_INTMSK & MARS_SH2_ACCESS_VDP) == 0);
 
-	MARS_VDP_DISPMODE = mars_lines | MARS_VDP_MODE_256;
+	MARS_VDP_DISPMODE = mars_lines | MARS_VDP_MODE_256 | MARS_VDP_PRIO_32X;
 	NTSC = (MARS_VDP_DISPMODE & MARS_NTSC_FORMAT) != 0;
 
 	// change 4096.0f to something else if WDT TCSR is changed!

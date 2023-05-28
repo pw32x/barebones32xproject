@@ -1,6 +1,17 @@
-load a md background
-load a md sprite
-display md sprite
-handle controller input on the 32x side
-move md sprite from 32x side
+TODO
 
+	load a md sprite
+	display md sprite
+	
+	convert init code to C
+
+Backlog
+
+	handle controller input on the 32x side
+	move md sprite from 32x side
+
+
+History
+
+
+	DONE load a md tileset

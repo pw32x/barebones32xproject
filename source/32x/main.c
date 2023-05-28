@@ -15,8 +15,13 @@ void setup_gray_palette()
 		unsigned short b1 = (i & 0x1f) << 10;
 		unsigned short g1 = (i & 0x1f) << 5;
 		unsigned short r1 = (i & 0x1f) << 0;
+
 		cram[i] = r1 | g1 | b1;
 	}
+
+	// with MARS_VDP_PRIO_32X active, setup color 0's highest bit to tell the 32X 
+	// hardware to draw the Genesis graphics underneath.
+	cram[0] = (1 << 15);
 }
 
 void clear_framebuffer()
@@ -40,7 +45,7 @@ void draw_square(int x, int y)
 	{
 		for (int loopx = 0; loopx < square_size; loopx++)
 		{
-			framebuffer[(x + loopx) + ((y + loopy) * 320)] = 31;
+			framebuffer[(x + loopx) + ((y + loopy) * 320)] = 15;
 		}
 	}
 }

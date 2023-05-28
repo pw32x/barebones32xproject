@@ -17,6 +17,9 @@
     <Filter Include="Source Files\common">
       <UniqueIdentifier>{5f7177e1-76e4-49b0-96b5-f146a4558353}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Genesis\data">
+      <UniqueIdentifier>{20080e7f-02bd-40d8-ad11-e694301f5110}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="clean.bat">
@@ -81,6 +84,15 @@
     <ClCompile Include="..\source\md\font.c">
       <Filter>Source Files\Genesis</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\md\data\genesis_tilemap.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\genesis_tileset.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\genesis_palette.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\32x\32x.h">
@@ -106,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="..\source\md\font.h">
       <Filter>Source Files\Genesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\genesis_palette.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\genesis_tilemap.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\genesis_tileset.h">
+      <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

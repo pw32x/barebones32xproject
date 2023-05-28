@@ -70,6 +70,9 @@
     <ClCompile Include="..\source\32x\secondary.c" />
     <ClCompile Include="..\source\32x\main.c" />
     <ClCompile Include="..\source\md\cd_init.c" />
+    <ClCompile Include="..\source\md\data\genesis_palette.c" />
+    <ClCompile Include="..\source\md\data\genesis_tilemap.c" />
+    <ClCompile Include="..\source\md\data\genesis_tileset.c" />
     <ClCompile Include="..\source\md\everdrive.c" />
     <ClCompile Include="..\source\md\font.c" />
     <ClCompile Include="..\source\md\main.c" />
@@ -84,6 +87,9 @@
     <ClInclude Include="..\source\32x\marshw.h" />
     <ClInclude Include="..\source\common\comm_ids.h" />
     <ClInclude Include="..\source\md\cd_init.h" />
+    <ClInclude Include="..\source\md\data\genesis_palette.h" />
+    <ClInclude Include="..\source\md\data\genesis_tilemap.h" />
+    <ClInclude Include="..\source\md\data\genesis_tileset.h" />
     <ClInclude Include="..\source\md\font.h" />
     <ClInclude Include="..\source\md\megasd.h" />
   </ItemGroup>
