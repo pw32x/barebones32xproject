@@ -250,6 +250,7 @@ main_loop:
 chk_hotplug:
         /* check hot-plug count */
         tst.b   hotplug_cnt
+        bne.b   chk_hotplug_exit
         move.b  #60,hotplug_cnt
 
         move.w  0xA1512C,d0
