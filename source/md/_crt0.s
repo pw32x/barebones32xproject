@@ -209,10 +209,18 @@ read_long:
 
         .data
 
+        .global enable_ints
+enable_ints:
+    move.w  #0x2000,sr          /* enable ints */
+
+        .global disable_ints
+disable_ints:
+    move.w  #0x2700,sr          /* disable ints */
+
 | Put remaining code in data section to lower bus contention for the rom.
 
-        .global do_main
-do_main:
+        .global init_main
+init_main:
         move.b  #1,0xA15107         /* set RV */
         move.b  #2,0xA130F1         /* SRAM disabled, write protected */
         move.b  #0,0xA15107         /* clear RV */
@@ -231,22 +239,17 @@ main_loop_start:
         or.w    #0x8000,d0
         move.w  d0,0xA15100         /* set FM - allow SH2 access to MARS hw */
         move.l  #0,0xA15120         /* let Master SH2 run */
+        rts
 
+        .global main_loop
 main_loop:
-        move.w  #0x2700,sr          /* disable ints */
-        bsr     bump_fm
-        move.w  #0x2000,sr          /* enable ints */
+        rts
 
-        move.w  0xA15120,d0         /* get COMM0 */
-        bne.b   handle_req
 
-        move.w  0xA15124,d0         /* get COMM4 */
-        bne.w   handle_sec_req
-
+        .global chk_hotplug
 chk_hotplug:
         /* check hot-plug count */
         tst.b   hotplug_cnt
-        bne.b   main_loop
         move.b  #60,hotplug_cnt
 
         move.w  0xA1512C,d0
@@ -256,16 +259,18 @@ chk_hotplug:
         beq.b   1f                  /* no pad in port 1, do hot-plug check */
 0:
         tst.b   net_type
-        bne.b   main_loop           /* networking enabled, ignore port 2 */
+        bne.b   chk_hotplug_exit           /* networking enabled, ignore port 2 */
         move.w  0xA1512E,d0
         cmpi.w  #0xF001,d0
-        beq.b   main_loop           /* mouse in port 2, exit */
+        beq.b   chk_hotplug_exit           /* mouse in port 2, exit */
         cmpi.w  #0xF000,d0
-        bne.b   main_loop           /* pad in port 2, exit */
+        bne     chk_hotplug_exit           /* pad in port 2, exit */
 1:
-        bsr     chk_ports
-        bra.b   main_loop
+		bsr     chk_ports
+chk_hotplug_exit:
+        rts
 
+/*
 | process request from Master SH2
 handle_req:
         cmpi.w  #0x01FF,d0
@@ -323,8 +328,9 @@ handle_req:
         cmpi.w  #0x1AFF,d0
         bls     cpy_md_vram
 | unknown command
-        move.w  #0,0xA15120         /* done */
+        move.w  #0,0xA15120         // done
         bra     main_loop
+*/
 
 | process request from Secondary SH2
 handle_sec_req:
@@ -991,10 +997,10 @@ net_cleanup:
         bra     main_loop
 
 
-# C-side function call to handle 32X commands. Will eventually migrate handle_req to be entirely in C
-c_handler:
-        jsr     md_update               /* call C function */
-        bra     main_loop
+|# C-side function call to handle 32X commands. Will eventually migrate handle_req to be entirely in C
+|c_handler:
+|        jsr     md_update               /* call C function */
+|        bra     main_loop
 
 | video debug functions
 
@@ -1755,7 +1761,7 @@ load_font:
 
 
 | Bump the FM player to keep the music going
-
+    .global bump_fm
 bump_fm:
         tst.w   fm_idx
         beq     bump_exit2          /* VGM not playing */

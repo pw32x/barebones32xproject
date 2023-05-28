@@ -35,20 +35,21 @@ void clear_framebuffer()
 	} while (++p < p_end);
 }
 
-void draw_square(int x, int y)
+void draw_square(int x, int y, int size)
 {
 	volatile unsigned char* framebuffer = (unsigned char*)(&MARS_FRAMEBUFFER + 0x100);
 
-	int square_size = 100;
-
-	for (int loopy = 0; loopy < square_size; loopy++)
+	for (int loopy = 0; loopy < size; loopy++)
 	{
-		for (int loopx = 0; loopx < square_size; loopx++)
+		for (int loopx = 0; loopx < size; loopx++)
 		{
 			framebuffer[(x + loopx) + ((y + loopy) * 320)] = 15;
 		}
 	}
 }
+
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 224
 
 int main(void)
 {
@@ -66,10 +67,18 @@ int main(void)
 
 	setup_gray_palette();
 
-	Mars_MDPutString("Hello world from 32x Side");
 
 	int x = 40;
-	int y = 50;	
+	int y = 50;
+	int directionx = 1;
+	int directiony = 1;
+
+	int square_size = 100;
+
+	int screen_limitx = SCREEN_WIDTH - directionx - square_size;
+	int screen_limity = SCREEN_HEIGHT - directiony - square_size;
+
+	Mars_MDPutString("Hello world from 32x Side");
 
 	while (1)
 	{
@@ -77,9 +86,34 @@ int main(void)
 
 		Mars_SetMDCrsr(2, 20);
 
-		Mars_MDPutString("Hello world from 32x Side");
+		x += directionx;
+		y += directiony;
 
-		draw_square(x, y);
+		if (x < 0)
+		{
+			x = 0;
+			directionx = -directionx;
+		}
+
+		if (x  > screen_limitx - 1)
+		{
+			x  = screen_limitx - 1;
+			directionx = -directionx;
+		}
+
+		if (y < 0)
+		{
+			y = 0;
+			directiony = -directiony;
+		}
+
+		if (y  > screen_limity - 1)
+		{
+			y = screen_limity - 1;
+			directiony = -directiony;
+		}
+
+        draw_square(x, y, square_size);
 
 		Mars_FlipFrameBuffers(1);
 	}

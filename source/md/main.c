@@ -10,7 +10,12 @@
 #include "data/genesis_tileset.h"
 #include "data/genesis_tilemap.h"
 
-extern void do_main(void);
+extern void main_loop();
+extern void init_main();
+extern void bump_fm();
+extern void enable_ints();
+extern void disable_ints();
+extern void chk_hotplug();
 
 // Communication channels                                               32X SIDE
 static volatile uint16_t* const MD_SYS_COMM0 = (uint16_t*) 0xA15120; // 0x20004020
@@ -154,24 +159,39 @@ void print_text(const char* str, int x, int y)
         put_tile_xy(*str++, x++, y);
 }
 
-int initialized = 0;
-
 unsigned short crsr_y;
 unsigned short crsr_x;
 
-void md_update()
+void process_commands()
 {
-    // TODO move this into an init function that's called at the beginning of the program.
-    if (!initialized)
-    {
-        vpd_load_palette(genesis_palette, 1);
-        int tilesetStart = vdp_load_tileset(genesis_tileset, sizeof(genesis_tileset), sizeof(font_data));
-        vdp_draw_tileset(genesis_tilemap, 0, 0, 40, 28, tilesetStart, 1);
-        initialized = 1;
-    }
+    if (!*MD_SYS_COMM0)
+        return;
 
     unsigned short command = *MD_SYS_COMM0 & 0xff00;
     unsigned short command_value = *MD_SYS_COMM0 & 0x00ff;
+
+    /*
+    if (command)
+    {
+        char buf[100];
+        sprintf(buf, "%04X", command);
+        print_text(buf, messageX, messageY);
+        messageY++;
+
+        if (messageY == 28)
+        {
+            messageY = 0;
+            messageX += 5;
+        }
+
+        if (messageX > 40)
+        {
+            while (1) {};
+        }
+    }
+    */
+
+
 
     if (command == SH2MD_COMMAND_SET_CURSOR)
     {
@@ -179,21 +199,30 @@ void md_update()
     
         crsr_y = (data & 0x1F);
         crsr_x = (data >> 6);
-
-        *MD_SYS_COMM0 = 0;
     }
     else if (command == SH2MD_COMMAND_PUT_CHAR)
     {
         uint16_t character = command_value;       // Extract the character
-
+    
         put_tile_xy(character, crsr_x, crsr_y);
-
+    
         crsr_x += 1;                             // Increment x cursor coordinate
-
-        *MD_SYS_COMM0 = 0;
     }
+}
 
-    print_text("Hello World from MD side", 0, 2);
+void init_graphics()
+{
+    vpd_load_palette(genesis_palette, 1);
+    int tilesetStart = vdp_load_tileset(genesis_tileset, sizeof(genesis_tileset), sizeof(font_data));
+    vdp_draw_tileset(genesis_tilemap, 0, 0, 40, 28, tilesetStart, 1);
+}
+
+#define VDP_VBLANK_FLAG         (1 << 3)
+
+void vdp_wait_vsync()
+{
+    while (*vdp_ctrl_port & VDP_VBLANK_FLAG);
+    while (!(*vdp_ctrl_port & VDP_VBLANK_FLAG));
 }
 
 int main(void)
@@ -201,13 +230,31 @@ int main(void)
     cd_ok = InitCD();
     megasd_ok = InitMegaSD();
 
-    
-
     /*
      * Main loop in ram - you need to have it in ram to avoid bus contention
      * for the rom with the SH2s.
      */
-    do_main(); // never returns
+
+    init_main();
+    init_graphics();
+
+    print_text("Hello World from MD side", 0, 2);
+
+    while (1)
+    {
+        // disabling and enabling ints screws up the MD_SYS_COMM0 messages in process_commands
+        // for some reason. it doesn't occur in assembly.
+        //disable_ints();
+        //bump_fm();
+        //enable_ints();
+
+        process_commands();
+        *MD_SYS_COMM0 = 0;
+
+        chk_hotplug();
+
+        vdp_wait_vsync();
+    }
 
     return 0;
 }
