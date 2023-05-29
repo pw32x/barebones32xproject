@@ -9,6 +9,9 @@
 #include "data/genesis_palette.h"
 #include "data/genesis_tileset.h"
 #include "data/genesis_tilemap.h"
+#include "data/32x_palette.h"
+#include "data/32x_tileset.h"
+#include "data/32x_tilemap.h"
 
 extern void main_loop();
 extern void init_main();
@@ -36,8 +39,11 @@ static volatile uint32_t* const vdp_ctrl_wide = (uint32_t*) 0xC00004;
 #define PLANE_WIDTH     64
 #define PLANE_HEIGHT    32
 
+#define VDP_VBLANK_FLAG         (1 << 3)
+
 #define GFX_WRITE_CRAM_ADDR(adr)    (((0xC000 + ((adr) & 0x7F)) << 16) + 0x00)
 #define GFX_WRITE_VRAM_ADDR(adr)    (((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00))
+#define GFX_WRITE_VSRAM_ADDR(adr)   (((0x4000 + ((adr) & 0x3F)) << 16) + 0x10)
 
 
 void vdp_set_autoinc(unsigned char value)
@@ -88,7 +94,8 @@ void vdp_draw_tileset(const unsigned short* tilemap,
                       unsigned short width, 
                       unsigned short height, 
                       unsigned short tilesetStart,
-                      unsigned short paletteIndex)
+                      unsigned short paletteIndex,
+                      unsigned short planeAddr)
 {
     // no clipping
     if (x < 0)
@@ -104,7 +111,7 @@ void vdp_draw_tileset(const unsigned short* tilemap,
 
     for (int loopy = 0; loopy < height; loopy++)
     {
-        uint16_t addr = PLANE_A_ADDR + (((x & 63) + (((y + loopy) & 31) << 6)) * 2);
+        uint16_t addr = planeAddr + (((x & 63) + (((y + loopy) & 31) << 6)) * 2);
         *vdp_ctrl_wide = GFX_WRITE_VRAM_ADDR((uint32_t) addr);
 
         for (int loopx = 0; loopx < width; loopx++)
@@ -213,16 +220,64 @@ void process_commands()
 void init_graphics()
 {
     vpd_load_palette(genesis_palette, 1);
-    int tilesetStart = vdp_load_tileset(genesis_tileset, sizeof(genesis_tileset), sizeof(font_data));
-    vdp_draw_tileset(genesis_tilemap, 0, 0, 40, 28, tilesetStart, 1);
+    int genesis_tileset_start = vdp_load_tileset(genesis_tileset, sizeof(genesis_tileset), sizeof(font_data));
+    vdp_draw_tileset(genesis_tilemap, 0, 0, 40, 28, genesis_tileset_start, 1, PLANE_A_ADDR);
+
+    vpd_load_palette(_32x_palette, 2);
+    int _32x_tileset_start = vdp_load_tileset(_32x_tileset, sizeof(_32x_tileset), genesis_tileset_start + sizeof(genesis_tileset));
+    vdp_draw_tileset(_32x_tilemap, 0, 0, 40, 28, _32x_tileset_start, 2, PLANE_B_ADDR);
 }
 
-#define VDP_VBLANK_FLAG         (1 << 3)
+
 
 void vdp_wait_vsync()
 {
     while (*vdp_ctrl_port & VDP_VBLANK_FLAG);
     while (!(*vdp_ctrl_port & VDP_VBLANK_FLAG));
+}
+
+void vdp_set_horizontal_scroll(unsigned short planeAddr, short scrollAmount)
+{
+    unsigned short vdpDestinationAddress = HSCROLL_ADDR;
+    if (planeAddr == PLANE_B_ADDR) 
+        vdpDestinationAddress += 2;
+
+    *vdp_ctrl_wide = GFX_WRITE_VRAM_ADDR(vdpDestinationAddress);
+    *vdp_data_port = scrollAmount;
+}
+
+void vdp_set_vertical_scroll(unsigned short planeAddr, short scrollAmount)
+{
+    unsigned short destinationAddress = (planeAddr == PLANE_B_ADDR) ? 2 : 0;
+
+    *vdp_ctrl_wide = GFX_WRITE_VSRAM_ADDR((unsigned int) destinationAddress);
+    *vdp_data_port = scrollAmount;
+}
+
+int planeAScrollX = 0;
+int planeAScrollY = 0;
+int planeBScrollX = 0;
+int planeBScrollY = 0;
+
+int planeAScrollXDirection = 1;
+int planeAScrollYDirection = 1;
+int planeBScrollXDirection = -1;
+int planeBScrollYDirection = -1;
+
+
+void update_scene()
+{
+    planeBScrollX += planeBScrollXDirection;
+    if (planeBScrollX > 100 || planeBScrollX < 0)
+        planeBScrollXDirection = -planeBScrollXDirection;
+
+    planeAScrollY += planeAScrollYDirection;
+    if (planeAScrollY > 100 || planeAScrollY < 0)
+        planeAScrollYDirection = -planeAScrollYDirection;
+
+    vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
+    vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
+    
 }
 
 int main(void)
@@ -252,6 +307,8 @@ int main(void)
         *MD_SYS_COMM0 = 0;
 
         chk_hotplug();
+
+        update_scene();
 
         vdp_wait_vsync();
     }

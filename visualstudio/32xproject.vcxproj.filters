@@ -93,6 +93,15 @@
     <ClCompile Include="..\source\md\data\genesis_palette.c">
       <Filter>Source Files\Genesis\data</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\md\data\32x_tileset.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\32x_palette.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\32x_tilemap.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\32x\32x.h">
@@ -126,6 +135,15 @@
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
     <ClInclude Include="..\source\md\data\genesis_tileset.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\32x_tileset.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\32x_palette.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\32x_tilemap.h">
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
   </ItemGroup>
