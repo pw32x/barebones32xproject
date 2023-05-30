@@ -1747,7 +1747,7 @@ load_font:
 #        lea     0xC00000,a1         /* VDP data reg */
 #        move.w  #0x8F02,(a0)        /* INC = 2 */
 #        move.l  #0x40000000,(a0)    /* write VRAM address 0 */
-#        lea     font_data,a2
+#        lea     font,a2
 #        move.w  #0x6B*8-1,d2
 #0:
 #        move.l  (a2)+,d0            /* font fg mask */

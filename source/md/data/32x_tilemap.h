@@ -2,6 +2,8 @@
 #ifndef _32X_TILEMAP_INCLUDE_H
 #define _32X_TILEMAP_INCLUDE_H
 
-extern const unsigned short _32x_tilemap[1120];
+#include <stdint.h>
+
+extern const uint16_t _32x_tilemap[1120];
 
 #endif // _32X_TILEMAP_INCLUDE_H

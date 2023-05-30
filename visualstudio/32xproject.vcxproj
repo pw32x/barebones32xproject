@@ -73,13 +73,14 @@
     <ClCompile Include="..\source\md\data\32x_palette.c" />
     <ClCompile Include="..\source\md\data\32x_tilemap.c" />
     <ClCompile Include="..\source\md\data\32x_tileset.c" />
+    <ClCompile Include="..\source\md\data\font.c" />
     <ClCompile Include="..\source\md\data\genesis_palette.c" />
     <ClCompile Include="..\source\md\data\genesis_tilemap.c" />
     <ClCompile Include="..\source\md\data\genesis_tileset.c" />
     <ClCompile Include="..\source\md\everdrive.c" />
-    <ClCompile Include="..\source\md\font.c" />
     <ClCompile Include="..\source\md\main.c" />
     <ClCompile Include="..\source\md\megasd.c" />
+    <ClCompile Include="..\source\md\vdp.c" />
     <ClCompile Include="..\source\md\vgm.c" />
     <ClCompile Include="..\source\md\xvprintf.c" />
   </ItemGroup>
@@ -93,11 +94,12 @@
     <ClInclude Include="..\source\md\data\32x_palette.h" />
     <ClInclude Include="..\source\md\data\32x_tilemap.h" />
     <ClInclude Include="..\source\md\data\32x_tileset.h" />
+    <ClInclude Include="..\source\md\data\font.h" />
     <ClInclude Include="..\source\md\data\genesis_palette.h" />
     <ClInclude Include="..\source\md\data\genesis_tilemap.h" />
     <ClInclude Include="..\source\md\data\genesis_tileset.h" />
-    <ClInclude Include="..\source\md\font.h" />
     <ClInclude Include="..\source\md\megasd.h" />
+    <ClInclude Include="..\source\md\vdp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

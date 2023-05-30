@@ -81,9 +81,6 @@
     <ClCompile Include="..\source\md\cd_init.c">
       <Filter>Source Files\Genesis</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\md\font.c">
-      <Filter>Source Files\Genesis</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\md\data\genesis_tilemap.c">
       <Filter>Source Files\Genesis\data</Filter>
     </ClCompile>
@@ -100,6 +97,12 @@
       <Filter>Source Files\Genesis\data</Filter>
     </ClCompile>
     <ClCompile Include="..\source\md\data\32x_tilemap.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\vdp.c">
+      <Filter>Source Files\Genesis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\font.c">
       <Filter>Source Files\Genesis\data</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,9 +128,6 @@
     <ClInclude Include="..\source\md\cd_init.h">
       <Filter>Source Files\Genesis</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\md\font.h">
-      <Filter>Source Files\Genesis</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\md\data\genesis_palette.h">
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
@@ -144,6 +144,12 @@
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
     <ClInclude Include="..\source\md\data\32x_tilemap.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\vdp.h">
+      <Filter>Source Files\Genesis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\font.h">
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
   </ItemGroup>

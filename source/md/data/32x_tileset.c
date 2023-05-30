@@ -2,7 +2,7 @@
 #include "32x_tileset.h"
 
  // 604 tiles
-const unsigned char _32x_tileset[19328] = 
+const uint8_t _32x_tileset[19328] = 
 {
  // tile 0
     0xFF, 0xFF, 0xFF, 0xFF,

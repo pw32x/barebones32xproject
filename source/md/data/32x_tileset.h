@@ -2,6 +2,8 @@
 #ifndef _32X_TILESET_INCLUDE_H
 #define _32X_TILESET_INCLUDE_H
 
-extern const unsigned char _32x_tileset[19328]; // 604 tiles
+#include <stdint.h>
+
+extern const uint8_t _32x_tileset[19328]; // 604 tiles
 
 #endif // _32X_TILESET_INCLUDE_H

@@ -1,6 +1,6 @@
 #include "font.h"
 
-const unsigned char font_data[3424] =
+const uint8_t font[3424] =
 {
 // 0x20
     0x00, 0x00, 0x00, 0x00, 

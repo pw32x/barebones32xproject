@@ -2,6 +2,8 @@
 #ifndef _32X_PALETTE_INCLUDE_H
 #define _32X_PALETTE_INCLUDE_H
 
-extern const unsigned short _32x_palette[16];
+#include <stdint.h>
+
+extern const uint16_t _32x_palette[16];
 
 #endif // _32X_PALETTE_INCLUDE_H

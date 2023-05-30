@@ -1,12 +1,10 @@
 TODO
 
-	start splitting off vdp functions to own file
 	load a md sprite
 	display md sprite
 	
 	convert more of the initialization code to C
-	
-	use typedefs for basic types
+
 	
 Backlog
 
@@ -17,6 +15,8 @@ Backlog
 
 History
 
+	DONE start splitting off vdp functions to own file
+	DONE use typedefs in types and api
 	DONE draw tilemap to plane B
 	DONE basic scrolling
 	DONE load a md tileset

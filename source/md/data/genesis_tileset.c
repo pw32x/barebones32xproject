@@ -2,7 +2,7 @@
 #include "genesis_tileset.h"
 
  // 419 tiles
-const unsigned char genesis_tileset[13408] = 
+const uint8_t genesis_tileset[13408] = 
 {
  // tile 0
     0x00, 0x00, 0x00, 0x00,
