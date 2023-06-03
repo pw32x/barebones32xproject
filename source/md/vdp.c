@@ -184,4 +184,6 @@ void vdp_upload_hardware_sprites()
         *vdp_data_wide = *source;
         source++;
     }
+
+    vdp_init_hardware_sprites();
 }

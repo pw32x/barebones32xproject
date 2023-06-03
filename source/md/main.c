@@ -177,6 +177,9 @@ void update_scene()
     if (planeAScrollY > 100 || planeAScrollY < 0)
         planeAScrollYDirection = -planeAScrollYDirection;
 
+    vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
+    vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
+ 
     for (int loop = 0; loop < HARDWARE_SPRITE_LIMIT; loop++)
     {
         sprite* current_sprite = sprites + loop;
@@ -212,7 +215,7 @@ int main(void)
         //disable_ints();
         //bump_fm();
         //enable_ints();
-        vdp_init_hardware_sprites();
+
         process_commands();
         *MD_SYS_COMM0 = 0;
 
@@ -222,9 +225,6 @@ int main(void)
         
         vdp_wait_vsync();
         vdp_upload_hardware_sprites();
-
-        vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
-        vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
     }
 
     return 0;
