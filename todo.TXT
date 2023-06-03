@@ -1,7 +1,6 @@
 TODO
 
-	load a md sprite
-	display md sprite
+
 	
 	convert more of the initialization code to C
 
@@ -14,6 +13,21 @@ Backlog
 
 
 History
+
+	DONE load a md sprite
+	DONE display md sprite
+
+	DONE fix type usage from exported files
+	DONE add example loading functions
+	DONE add instructions
+
+	DONE add instructions to gg2c
+
+
+	DONE add gg2c to Github	
+	DONE add github path to execution start	
+	DONE add github path to exported files
+	DONE add gg animation types
 
 	DONE start splitting off vdp functions to own file
 	DONE use typedefs in types and api

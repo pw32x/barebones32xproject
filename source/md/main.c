@@ -12,6 +12,8 @@
 #include "data/32x_palette.h"
 #include "data/32x_tileset.h"
 #include "data/32x_tilemap.h"
+#include "data/sphere32x32_4bpp.h"
+#include "data/sphere32x32_4bpp_palette.h"
 #include "data/font.h"
 
 extern void init_main();
@@ -81,6 +83,8 @@ void process_commands()
     }
 }
 
+int sphere32x32_4bpp_tile_start;
+
 void init_graphics()
 {
     vpd_load_palette(genesis_palette, 1);
@@ -90,6 +94,10 @@ void init_graphics()
     vpd_load_palette(_32x_palette, 2);
     int _32x_tileset_start = vdp_load_tileset(_32x_tileset, sizeof(_32x_tileset), genesis_tileset_start + sizeof(genesis_tileset));
     vdp_draw_tileset(_32x_tilemap, 0, 0, 40, 28, _32x_tileset_start, 2, PLANE_B_ADDR);
+
+    vpd_load_palette(sphere32x32_4bpp_palette, 3);
+    int sphere32x32_4bpp_start = vdp_load_tileset((uint8_t*)sphere32x32_4bpp, sizeof(sphere32x32_4bpp), _32x_tileset_start + sizeof(_32x_tileset));
+    sphere32x32_4bpp_tile_start = sphere32x32_4bpp_start / 32;
 }
 
 int planeAScrollX = 0;
@@ -103,6 +111,62 @@ int planeBScrollXDirection = -1;
 int planeBScrollYDirection = -1;
 
 
+#define SPRITE_WIDTH 32
+#define SPRITE_HEIGHT 32
+
+typedef struct
+{
+    int16_t x;
+    int16_t y;
+    int16_t direction_x;
+    int16_t direction_y;
+} sprite;
+
+sprite sprites[HARDWARE_SPRITE_LIMIT];
+
+int16_t random_values[40] = 
+{
+    3, -1,
+    -2, 3,
+    1, 1,
+    -2, -1,
+    1, -2,
+    -2, -3,
+    1, -2,
+    2, 2,
+    3, 2,
+    -3, -2,
+    -1, -2,
+    -2, 2,
+    3, -3,
+    2, 1,
+    -2, -3,
+    -1, -1,
+    -1, 2,
+    -1, 3,
+    1, 3,
+    -3, -2
+};
+
+void init_scene()
+{
+    sprite* current_sprite = sprites;
+
+    for (int loopy = 0; loopy < 8; loopy++)
+    {
+        for (int loopx = 0; loopx < 10; loopx++)
+        {
+            current_sprite->x = (loopx * 32);
+            current_sprite->y = (loopy * 32);
+            
+            current_sprite->direction_x = random_values[(loopy + loopx) % 40] ;
+            current_sprite->direction_y = random_values[(loopy + loopx + 1) % 40];
+
+            current_sprite++;
+        }
+    }
+}
+
 void update_scene()
 {
     planeBScrollX += planeBScrollXDirection;
@@ -113,9 +177,21 @@ void update_scene()
     if (planeAScrollY > 100 || planeAScrollY < 0)
         planeAScrollYDirection = -planeAScrollYDirection;
 
-    vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
-    vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
-    
+    for (int loop = 0; loop < HARDWARE_SPRITE_LIMIT; loop++)
+    {
+        sprite* current_sprite = sprites + loop;
+
+        current_sprite->x += current_sprite->direction_x;
+        current_sprite->y += current_sprite->direction_y;
+
+        if (current_sprite->x < 0 || current_sprite->x + SPRITE_WIDTH > SCREEN_WIDTH)
+            current_sprite->direction_x = -current_sprite->direction_x;
+
+        if (current_sprite->y < 0 || current_sprite->y + SPRITE_HEIGHT > SCREEN_HEIGHT)
+            current_sprite->direction_y = -current_sprite->direction_y;
+
+        vdp_push_hardware_sprite(current_sprite->x, current_sprite->y, SPRITE_SIZE(4, 4), sphere32x32_4bpp_tile_start | (3 << 13));
+    }
 }
 
 int main(void)
@@ -123,13 +199,9 @@ int main(void)
     cd_ok = InitCD();
     megasd_ok = InitMegaSD();
 
-    /*
-     * Main loop in ram - you need to have it in ram to avoid bus contention
-     * for the rom with the SH2s.
-     */
-
     init_main();
     init_graphics();
+    init_scene();
 
     print_text("Hello World from MD side", 0, 2);
 
@@ -140,15 +212,19 @@ int main(void)
         //disable_ints();
         //bump_fm();
         //enable_ints();
-
+        vdp_init_hardware_sprites();
         process_commands();
         *MD_SYS_COMM0 = 0;
 
         chk_hotplug();
 
         update_scene();
-
+        
         vdp_wait_vsync();
+        vdp_upload_hardware_sprites();
+
+        vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
+        vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
     }
 
     return 0;

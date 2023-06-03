@@ -140,3 +140,48 @@ void vdp_set_vertical_scroll(uint16_t planeAddr, int16_t scrollAmount)
     *vdp_data_port = scrollAmount;
 }
 
+
+hardware_sprite hardware_sprites[HARDWARE_SPRITE_LIMIT];
+int hardware_sprite_count = 0;
+hardware_sprite* current_hardware_sprite = hardware_sprites;
+
+void vdp_init_hardware_sprites()
+{
+    hardware_sprite_count = 0;
+    current_hardware_sprite = hardware_sprites;
+}
+
+void vdp_push_hardware_sprite(int16_t x, int16_t y, uint8_t size, uint16_t attributes)
+{
+    if (hardware_sprite_count > HARDWARE_SPRITE_LIMIT - 2)
+        return;
+
+    hardware_sprite_count++;
+
+    current_hardware_sprite->x = x + 128;
+    current_hardware_sprite->y = y + 128;
+    current_hardware_sprite->size = size;
+    current_hardware_sprite->link = hardware_sprite_count;
+    current_hardware_sprite->attributes = attributes;
+
+    current_hardware_sprite++;
+}
+
+void vdp_upload_hardware_sprites()
+{
+    hardware_sprites[hardware_sprite_count - 1].link = 0;
+
+    // this is the worst VRAM memory copy function you've ever seen. Use DMA instead.
+
+    vdp_set_autoinc(2);
+    *vdp_ctrl_wide = GFX_WRITE_VRAM_ADDR(SPRITE_ATTR_ADDR);
+
+    uint32_t* source = (uint32_t*)hardware_sprites;
+    uint16_t copySize = (sizeof(hardware_sprite) * hardware_sprite_count) >> 2;
+
+    for (int loop = 0; loop < copySize; loop++)
+    {
+        *vdp_data_wide = *source;
+        source++;
+    }
+}

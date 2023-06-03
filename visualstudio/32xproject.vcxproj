@@ -77,6 +77,8 @@
     <ClCompile Include="..\source\md\data\genesis_palette.c" />
     <ClCompile Include="..\source\md\data\genesis_tilemap.c" />
     <ClCompile Include="..\source\md\data\genesis_tileset.c" />
+    <ClCompile Include="..\source\md\data\sphere32x32_4bpp.c" />
+    <ClCompile Include="..\source\md\data\sphere32x32_4bpp_palette.c" />
     <ClCompile Include="..\source\md\everdrive.c" />
     <ClCompile Include="..\source\md\main.c" />
     <ClCompile Include="..\source\md\megasd.c" />
@@ -98,6 +100,8 @@
     <ClInclude Include="..\source\md\data\genesis_palette.h" />
     <ClInclude Include="..\source\md\data\genesis_tilemap.h" />
     <ClInclude Include="..\source\md\data\genesis_tileset.h" />
+    <ClInclude Include="..\source\md\data\sphere32x32_4bpp.h" />
+    <ClInclude Include="..\source\md\data\sphere32x32_4bpp_palette.h" />
     <ClInclude Include="..\source\md\megasd.h" />
     <ClInclude Include="..\source\md\vdp.h" />
   </ItemGroup>

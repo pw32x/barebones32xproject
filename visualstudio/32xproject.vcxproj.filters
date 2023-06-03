@@ -105,6 +105,12 @@
     <ClCompile Include="..\source\md\data\font.c">
       <Filter>Source Files\Genesis\data</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\md\data\sphere32x32_4bpp.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\md\data\sphere32x32_4bpp_palette.c">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\32x\32x.h">
@@ -150,6 +156,12 @@
       <Filter>Source Files\Genesis</Filter>
     </ClInclude>
     <ClInclude Include="..\source\md\data\font.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\sphere32x32_4bpp.h">
+      <Filter>Source Files\Genesis\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\md\data\sphere32x32_4bpp_palette.h">
       <Filter>Source Files\Genesis\data</Filter>
     </ClInclude>
   </ItemGroup>
