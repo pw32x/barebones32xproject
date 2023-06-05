@@ -15,9 +15,9 @@
 #define PLANE_WIDTH     64
 #define PLANE_HEIGHT    32
 
+// Helpful macros from SGDK https://github.com/Stephane-D/SGDK
 #define VDP_VBLANK_FLAG         (1 << 3)
 
-// Helpful macros from SGDK https://github.com/Stephane-D/SGDK
 #define GFX_WRITE_CRAM_ADDR(adr)    (((0xC000 + ((adr) & 0x7F)) << 16) + 0x00)
 #define GFX_WRITE_VRAM_ADDR(adr)    (((0x4000 + ((adr) & 0x3FFF)) << 16) + (((adr) >> 14) | 0x00))
 #define GFX_WRITE_VSRAM_ADDR(adr)   (((0x4000 + ((adr) & 0x3F)) << 16) + 0x10)

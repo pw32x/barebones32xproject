@@ -153,7 +153,7 @@ void vdp_init_hardware_sprites()
 
 void vdp_push_hardware_sprite(int16_t x, int16_t y, uint8_t size, uint16_t attributes)
 {
-    if (hardware_sprite_count > HARDWARE_SPRITE_LIMIT - 2)
+    if (hardware_sprite_count >= HARDWARE_SPRITE_LIMIT)
         return;
 
     hardware_sprite_count++;

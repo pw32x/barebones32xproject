@@ -1760,6 +1760,11 @@ load_font:
 #        dbra    d2,0b
 #        rts
 
+    .global update_fm
+update_fm:
+        move.w  #0x2700,sr          /* disable ints */
+        bsr     bump_fm
+        move.w  #0x2000,sr          /* enable ints */
 
 | Bump the FM player to keep the music going
     .global bump_fm

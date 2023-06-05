@@ -21,6 +21,7 @@ extern void bump_fm();
 extern void enable_ints();
 extern void disable_ints();
 extern void chk_hotplug();
+extern void update_fm();
 
 // Communication channels                                               32X SIDE
 static volatile uint16_t* const MD_SYS_COMM0 = (uint16_t*) 0xA15120; // 0x20004020
@@ -177,8 +178,8 @@ void update_scene()
     if (planeAScrollY > 100 || planeAScrollY < 0)
         planeAScrollYDirection = -planeAScrollYDirection;
 
-    vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
-    vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
+        vdp_set_vertical_scroll(PLANE_A_ADDR, planeAScrollY);
+        vdp_set_horizontal_scroll(PLANE_B_ADDR, planeBScrollX);
  
     for (int loop = 0; loop < HARDWARE_SPRITE_LIMIT; loop++)
     {
@@ -195,6 +196,8 @@ void update_scene()
 
         vdp_push_hardware_sprite(current_sprite->x, current_sprite->y, SPRITE_SIZE(4, 4), sphere32x32_4bpp_tile_start | (3 << 13));
     }
+
+
 }
 
 int main(void)
@@ -216,6 +219,8 @@ int main(void)
         //bump_fm();
         //enable_ints();
 
+        //update_fm();
+
         process_commands();
         *MD_SYS_COMM0 = 0;
 
@@ -223,6 +228,7 @@ int main(void)
 
         update_scene();
         
+
         vdp_wait_vsync();
         vdp_upload_hardware_sprites();
     }

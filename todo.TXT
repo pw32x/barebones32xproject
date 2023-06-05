@@ -1,19 +1,24 @@
 TODO
 
-
-	
-	convert more of the initialization code to C
-
+	new project
 	
 Backlog
 
-	handle controller input on the 32x side
 	have md react from 32x side values like position or something
 		tilt the screen, move a sprite, something.
 
+	implement DMA copy
+
+	fix bump_fm
+	
+	play some music?
 
 History
-
+	NAH upload daily rom versions? 
+	DONE make a test "release" to see how that works
+	NAH replace vblank handler with C version
+	NAH joystick support
+	
 	DONE load a md sprite
 	DONE display md sprite
 
