@@ -158,7 +158,7 @@ void init_scene()
         for (int loopx = 0; loopx < 10; loopx++)
         {
             current_sprite->x = (loopx * 32);
-            current_sprite->y = (loopy * 32);
+            current_sprite->y = (loopy * 24);
             
             current_sprite->direction_x = random_values[(loopy + loopx) % 40] ;
             current_sprite->direction_y = random_values[(loopy + loopx + 1) % 40];
