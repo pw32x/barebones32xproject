@@ -39,7 +39,7 @@ Run make from the base folder
 		
 	make -f build/Makefile_32X TARGET=<my project name>
 		
-The results will go into an "out" folder
+The results will go into an "out" folder at the root of the project
 
 # License(s)
 
